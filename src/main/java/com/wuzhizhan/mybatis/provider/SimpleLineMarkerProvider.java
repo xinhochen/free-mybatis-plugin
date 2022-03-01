@@ -1,67 +1,57 @@
 package com.wuzhizhan.mybatis.provider;
 
-import com.google.common.base.Optional;
-
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.event.MouseEvent;
+import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.*;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author yanglin
  */
-public abstract class SimpleLineMarkerProvider<F extends PsiElement, T> extends MarkerProviderAdaptor {
+public abstract class SimpleLineMarkerProvider<F extends PsiElement, T extends PsiElement> extends MarkerProviderAdaptor {
 
     @Override
-    public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
+    public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+    public LineMarkerInfo<F> getLineMarkerInfo(@NotNull PsiElement element) {
         if (!isTheElement(element)) return null;
 
         Optional<T> processResult = apply((F) element);
-        return processResult.isPresent() ? new LineMarkerInfo<F>(
+        return processResult.map(t -> new LineMarkerInfo<F>(
                 (F) element,
                 element.getTextRange(),
                 getIcon(),
-                Pass.UPDATE_ALL,
-                getTooltipProvider(processResult.get()),
-                getNavigationHandler(processResult.get()),
-                GutterIconRenderer.Alignment.CENTER
-        ) : null;
+                getTooltipProvider(t),
+                getNavigationHandler(t),
+                GutterIconRenderer.Alignment.CENTER,
+                getAccessibleNameProvider()
+        )).orElse(null);
     }
 
     private Function<F, String> getTooltipProvider(final T target) {
-        return new Function<F, String>() {
-            @Override
-            public String fun(F from) {
-                return getTooltip(from, target);
-            }
-        };
+        return from -> getTooltip(from, target);
     }
 
     private GutterIconNavigationHandler<F> getNavigationHandler(final T target) {
-        return new GutterIconNavigationHandler<F>() {
-            @Override
-            public void navigate(MouseEvent e, F from) {
-                getNavigatable(from, target).navigate(true);
-            }
-        };
+        return (e, from) -> getNavigatable(from, target).navigate(true);
+    }
+
+    private Supplier<String> getAccessibleNameProvider() {
+        return () -> "marker";
     }
 
     public abstract boolean isTheElement(@NotNull PsiElement element);
