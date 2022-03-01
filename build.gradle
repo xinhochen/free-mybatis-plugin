@@ -1,19 +1,17 @@
 buildscript {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
         mavenLocal()
         mavenCentral()
     }
-
 }
 plugins {
-    id "org.jetbrains.intellij" version "0.4.15"
+    id 'org.jetbrains.intellij' version '1.4.0'
+    id 'java'
 }
 
-group = 'cn.wuzhizhan.idea.mybatis'
-version = '2019.12.18'
-
-apply plugin: 'java'
+group 'cn.wuzhizhan.idea.mybatis'
+version '2022.02.28'
 sourceCompatibility = 1.8
 
 repositories {
@@ -21,30 +19,52 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'lib', includes: ['*jar'])
-    compile group: 'com.softwareloop', name: 'mybatis-generator-lombok-plugin', version: '1.0'
-    compile group: 'uk.com.robust-it', name: 'cloning', version: '1.9.2'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
-intellij {
-    version = 'IU-2018.1'
-    pluginName = 'free-idea-mybatis'
-    plugins = ['coverage', 'Spring', 'DatabaseTools']
-    intellij.updateSinceUntilBuild false
-}
-patchPluginXml {
-    changeNotes """
-    <h4>2019.12.18</h4>
-      <ul>
-        <li>feature:移除jdbc依赖,不用再次输入密码</li>
-        <li>bugfix:修复返回类型检测错误</li>
-        <li>bugfix:mybatis generator修复oracle错误</li>
-        <li>bugfix:mybatis generator修复postgres数据库</li>
-        <li>bugfix:mybatis generator修复xml mapper重复创建</li>
-      </ul>
-     """
+    implementation fileTree('lib') { include '*.jar' }
+    implementation 'com.softwareloop:mybatis-generator-lombok-plugin:1.0'
+    implementation 'uk.com.robust-it:cloning:1.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
+buildPlugin {
+    buildSearchableOptions.enabled = false
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version = '2021.3.2'
+    type = "IU"
+    pluginName = 'free-idea-mybatis'
+    plugins = ['coverage', 'Spring', 'DatabaseTools', 'java']
+    intellij.updateSinceUntilBuild = false
+}
+patchPluginXml {
+    changeNotes = """
+        <h4>2022.02.28</h4>
+        <ul>
+            <li>feature: Support 2021.3.2</li>
+            <li>feature: Support Spring Boot</li>
+        </ul>
+        <h4>2020.12.24</h4>
+        <ul>
+            <li>feature: 生成swagger注解</li>
+            <li>other：最低版本 idea 2018.1</li>
+            <li>bugfix: 兼容到intellij idea 2020.3</li>
+            <li>bugfix: 修复生成sql勾选分页时出错的问题</li>
+        </ul>
+        <h4>2019.12.18</h4>
+        <ul>
+            <li>feature: 移除jdbc依赖,不用再次输入密码</li>
+            <li>bugfix: 修复返回类型检测错误</li>
+            <li>bugfix: mybatis generator修复oracle错误</li>
+            <li>bugfix: mybatis generator修复postgres数据库</li>
+            <li>bugfix: mybatis generator修复xml mapper重复创建</li>
+        </ul>
+    """
+}
+test {
+    useJUnitPlatform()
+}
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }

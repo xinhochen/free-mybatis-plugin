@@ -1,76 +1,87 @@
 <idea-plugin>
-    <id>cn.wuzhizhan.plugin.mybatis</id>
-    <name>Free MyBatis plugin</name>
-    <vendor email="wuzhizhan@wuzhizhan.cn" url="https://github.com/wuzhizhan">wuzhizhan</vendor>
+    <id>cn.wuzhizhan.idea.mybatis.free-idea-mybatis</id>
+    <name>Free IDEA Mybatis</name>
+    <vendor email="xinhochen@gmail.com" url="https://github.com/xinhochen/free-mybatis-plugin">xinhochen</vendor>
+
+    <version>2020.12.18</version>
+    <change-notes><![CDATA[
+        <h4>2022.02.28</h4>
+        <ul>
+            <li>feature: Support 2021.3.2</li>
+            <li>feature: Support Spring Boot</li>
+        </ul>
+        <h4>2020.12.24</h4>
+        <ul>
+            <li>feature:生成swagger注解</li>
+            <li>other：最低版本 idea 2018.1</li>
+            <li>bugfix:兼容到intellij idea 2020.3</li>
+            <li>bugfix:修复生成sql勾选分页时出错的问题 </li>
+        </ul>
+        <h4>2019.12.18</h4>
+        <ul>
+            <li>feature:移除jdbc依赖,不用再次输入密码</li>
+            <li>bugfix:修复返回类型检测错误</li>
+            <li>bugfix:mybatis generator修复oracle错误</li>
+            <li>bugfix:mybatis generator修复postgres数据库</li>
+            <li>bugfix:mybatis generator修复xml mapper重复创建</li>
+        </ul>
+    ]]></change-notes>
 
     <description><![CDATA[
-         Free Mybatis plugin <br/>
-          A idea plugin for mybatis <br/>
-          free-idea-mybatis is an enchange plugin for idea to supoort mybatis,here is the main functions:</br>
+        Free IDEA Mybatis<br/>
+        A IDEA plugin for MyBatis, based on previous plugin <b>Free Mybatis Plugin</b>. <br/>
+        free-idea-mybatis is an enhanced plugin for IDEA to support mybatis, here is the main functions:</br>
         <ul>
-        <li>generate mapper xml files</li>
-        <li>navigate from the code to mapper and from the mapper back to code</li>
-        <li>auto code and error tips</li>
-        <li>support mybatis generator gui</li>
+            <li>generate mapper xml files</li>
+            <li>navigate from the code to mapper and from the mapper back to code</li>
+            <li>auto code and error tips</li>
+            <li>support mybatis generator gui</li>
+            <li>generate swagger model annotation</li>
         </ul>
 
-        free-idea-mybatis是一款增强idea对mybatis支持的插件，主要功能如下：<br/>
+        free-idea-mybatis是一款增强IDEA对mybatis支持的插件，主要功能如下：<br/>
         <ul>
-        <li>生成mapper xml文件</li>
-        <li>快速从代码跳转到mapper及从mapper返回代码</li>
-        <li>mybatis自动补全及语法错误提示</li>
-        <li>集成mybatis generator gui界面</li>
+            <li>生成mapper xml文件</li>
+            <li>快速从代码跳转到mapper及从mapper返回代码</li>
+            <li>mybatis自动补全及语法错误提示</li>
+            <li>集成mybatis generator gui界面</li>
+            <li>根据数据库注解，生成swagger model注解</li>
         </ul>
-      ]]></description>
+    ]]></description>
+    <idea-version since-build="203"/>
 
-    <idea-version since-build="145"/>
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
     <depends>com.intellij.database</depends>
     <depends>com.intellij.spring</depends>
-    <actions>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
-        <action id="free-mabatis-generate-action" class="com.wuzhizhan.mybatis.action.MybatisGeneratorMainAction" text="mybatis-generator"
-                description="mybatis generator idea plugin">
-            <add-to-group group-id="DatabaseViewPopupMenu" anchor="first"/>
-        </action>
-    </actions>
     <extensions defaultExtensionNs="com.intellij">
-        <dom.fileDescription implementation="com.wuzhizhan.mybatis.dom.description.MapperDescription"/>
-        <dom.fileDescription implementation="com.wuzhizhan.mybatis.dom.description.ConfigurationDescription"/>
-        <definitionsSearch implementation="com.wuzhizhan.mybatis.definitionsearch.MapperDefinitionSearch"/>
+        <dom.fileMetaData implementation="com.wuzhizhan.mybatis.dom.description.MapperDescription" rootTagName="mapper"/>
+        <dom.fileMetaData implementation="com.wuzhizhan.mybatis.dom.description.ConfigurationDescription" rootTagName="configuration"/>
+        <definitionsScopedSearch implementation="com.wuzhizhan.mybatis.definitionsearch.MapperDefinitionSearch"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.service.JavaService"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.service.AnnotationService"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.service.EditorService"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.alias.AliasFacade"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.locator.MapperLocator"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.service.TableInfoService"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.wuzhizhan.mybatis.provider.MapperLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="XML"
-                                        implementationClass="com.wuzhizhan.mybatis.provider.StatementLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA"
-                                        implementationClass="com.wuzhizhan.mybatis.provider.InjectionLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.wuzhizhan.mybatis.provider.MapperLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="XML" implementationClass="com.wuzhizhan.mybatis.provider.StatementLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.wuzhizhan.mybatis.provider.InjectionLineMarkerProvider"/>
         <applicationConfigurable groupId="tools" instance="com.wuzhizhan.mybatis.setting.MybatisConfigurable"/>
+        <applicationService serviceImplementation="com.wuzhizhan.mybatis.setting.MybatisSetting"/>
         <completion.contributor language="JAVA" implementationClass="com.wuzhizhan.mybatis.contributor.JavaMenthodCompletionContributor"/>
-        <applicationService serviceInterface="com.wuzhizhan.mybatis.setting.MybatisSetting"
-                            serviceImplementation="com.wuzhizhan.mybatis.setting.MybatisSetting"/>
-        <completion.contributor language="XML"
-                                implementationClass="com.wuzhizhan.mybatis.contributor.TestParamContributor"/>
-        <completion.contributor language="SQL"
-                                implementationClass="com.wuzhizhan.mybatis.contributor.SqlParamCompletionContributor"
-                                order="first"/>
+        <completion.contributor language="XML" implementationClass="com.wuzhizhan.mybatis.contributor.TestParamContributor"/>
+        <completion.contributor language="SQL" implementationClass="com.wuzhizhan.mybatis.contributor.SqlParamCompletionContributor" order="first"/>
         <fileTemplateGroup implementation="com.wuzhizhan.mybatis.template.MybatisFileTemplateDescriptorFactory"/>
         <typedHandler implementation="com.wuzhizhan.mybatis.action.MybatisTypedHandler" id="mybatis" order="first"/>
-        <defaultLiveTemplatesProvider implementation="com.wuzhizhan.mybatis.template.SqlLiveTemplateProvider"/>
-        <refactoring.elementListenerProvider
-                implementation="com.wuzhizhan.mybatis.refactoring.MapperRefactoringProvider"/>
-        <localInspection language="JAVA" shortName="MybatisMapperMethodInspection"
-                         displayName="Mapper method inspection"
-                         groupName="Mybatis" enabledByDefault="true" level="ERROR"
-                         implementationClass="com.wuzhizhan.mybatis.inspection.MapperMethodInspection"/>
-        <localInspection language="XML" shortName="MybatisMapperXmlInspection" enabledByDefault="true" level="ERROR"
-                         displayName="Mapper xml inspection"
-                         groupName="Mybatis"
-                         implementationClass="com.wuzhizhan.mybatis.inspection.MapperXmlInspection"/>
+        <defaultLiveTemplates file="/liveTemplates/sql.xml"/>
+        <refactoring.elementListenerProvider implementation="com.wuzhizhan.mybatis.refactoring.MapperRefactoringProvider"/>
+        <localInspection language="JAVA" shortName="MybatisMapperMethodInspection" displayName="Mapper method inspection" groupName="Mybatis" enabledByDefault="true" level="ERROR" implementationClass="com.wuzhizhan.mybatis.inspection.MapperMethodInspection"/>
+        <localInspection language="XML" shortName="MybatisMapperXmlInspection" enabledByDefault="true" level="ERROR" displayName="Mapper xml inspection" groupName="Mybatis" implementationClass="com.wuzhizhan.mybatis.inspection.MapperXmlInspection"/>
         <intentionAction>
             <className>com.wuzhizhan.mybatis.intention.GenerateParamAnnotationIntention</className>
         </intentionAction>
@@ -80,9 +91,14 @@
         <intentionAction order="first">
             <className>com.wuzhizhan.mybatis.intention.GenerateMapperIntention</className>
         </intentionAction>
-        <projectService serviceInterface="com.wuzhizhan.mybatis.setting.PersistentConfig"
-          serviceImplementation="com.wuzhizhan.mybatis.setting.PersistentConfig"/>
-        <projectConfigurable groupId="tools" displayName="Mybatis generator setting" id="free.mybatis.gene.id"
-          instance="com.wuzhizhan.mybatis.setting.MybatisGeneratorConfigurable"/>
+        <projectService serviceImplementation="com.wuzhizhan.mybatis.setting.PersistentConfig"/>
+        <projectConfigurable groupId="tools" displayName="Mybatis Generator Setting" id="free.mybatis.gene.id" instance="com.wuzhizhan.mybatis.setting.MybatisGeneratorConfigurable"/>
+        <spring.customLocalComponentsDiscoverer implementation="com.wuzhizhan.mybatis.locator.MapperBeanProvider" />
     </extensions>
+
+    <actions>
+        <action id="free-mabatis-generate-action" class="com.wuzhizhan.mybatis.action.MybatisGeneratorMainAction" text="Mybatis-Generator" description="Mybatis generator idea plugin">
+            <add-to-group group-id="DatabaseViewPopupMenu" anchor="first"/>
+        </action>
+    </actions>
 </idea-plugin>
