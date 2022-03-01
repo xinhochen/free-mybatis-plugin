@@ -15,7 +15,7 @@ public abstract class GenerateModel {
 
     public static GenerateModel getInstance(String identifier) {
         try {
-            return getInstance(Integer.valueOf(identifier));
+            return getInstance(Integer.parseInt(identifier));
         } catch (Exception e) {
             return START_WITH_MODEL;
         }
@@ -44,7 +44,7 @@ public abstract class GenerateModel {
     }
 
     public boolean matchesAny(Collection<String> patterns, String target) {
-        return matchesAny(patterns.toArray(new String[patterns.size()]), target);
+        return matchesAny(patterns.toArray(new String[0]), target);
     }
 
     protected abstract boolean apply(String pattern, String target);

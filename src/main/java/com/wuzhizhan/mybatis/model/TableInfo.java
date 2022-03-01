@@ -4,6 +4,7 @@ import com.intellij.database.model.DasColumn;
 import com.intellij.database.psi.DbTable;
 import com.intellij.database.util.DasUtil;
 import com.intellij.util.containers.JBIterable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,14 +14,14 @@ public class TableInfo {
 
     public final DbTable tableElement;
 
-    private List<DasColumn> columns = new ArrayList<DasColumn>();
+    private final List<DasColumn> columns;
 
-    private List<String> primaryKeys = new ArrayList<String>();
+    private final List<String> primaryKeys = new ArrayList<>();
 
 
     public TableInfo(DbTable tableElement) {
         this.tableElement = tableElement;
-        List<DasColumn> columns = new ArrayList<DasColumn>();
+        List<DasColumn> columns = new ArrayList<>();
 
         JBIterable<? extends DasColumn> columnsIter = DasUtil.getColumns(tableElement);
         List<? extends DasColumn> dasColumns = columnsIter.toList();
@@ -57,12 +58,9 @@ public class TableInfo {
     }
 
     public List<DasColumn> getNonPrimaryColumns() {
-        Set<String> pKNameSet = new HashSet<String>();
-        for (String pkName : getPrimaryKeys()) {
-            pKNameSet.add(pkName);
-        }
+        Set<String> pKNameSet = new HashSet<>(getPrimaryKeys());
 
-        List<DasColumn> ret = new ArrayList<DasColumn>();
+        List<DasColumn> ret = new ArrayList<>();
         for (DasColumn column : columns) {
             if (!pKNameSet.contains(column.getName())) {
                 ret.add(column);

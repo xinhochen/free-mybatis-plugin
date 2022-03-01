@@ -1,6 +1,5 @@
 package com.wuzhizhan.mybatis.inspection;
 
-import com.google.common.base.Optional;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author yanglin
@@ -48,15 +48,11 @@ public class MapperMethodInspection extends MapperInspection {
         final List<ProblemDescriptor> problems = new ArrayList<>(2);
         Optional<ProblemDescriptor> optionalProblem = checkStatementExists(method, manager, isOnTheFly);
 
-        if (optionalProblem.isPresent()) {
-            problems.add(optionalProblem.get());
-        }
+        optionalProblem.ifPresent(problems::add);
 
         optionalProblem = checkResultType(method, manager, isOnTheFly);
 
-        if (optionalProblem.isPresent()) {
-            problems.add(optionalProblem.get());
-        }
+        optionalProblem.ifPresent(problems::add);
 
         return problems;
     }
@@ -67,10 +63,10 @@ public class MapperMethodInspection extends MapperInspection {
             final boolean isOnTheFly) {
         final Optional<DomElement> optionalDomElement =
                 JavaService.getInstance(method.getProject())
-                           .findStatement(method);
+                        .findStatement(method);
 
         if (!optionalDomElement.isPresent()) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         final DomElement domElement = optionalDomElement.get();
@@ -78,8 +74,8 @@ public class MapperMethodInspection extends MapperInspection {
         if (domElement instanceof Select) {
             final Select selectStatement = (Select) domElement;
 
-            if ( selectStatement.getResultMap().getValue() != null) {
-                return Optional.absent();
+            if (selectStatement.getResultMap().getValue() != null) {
+                return Optional.empty();
             }
 
             final Optional<PsiClass> methodResultType = StatementGenerator.getSelectResultType(method);
@@ -115,7 +111,7 @@ public class MapperMethodInspection extends MapperInspection {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private Optional<ProblemDescriptor> checkStatementExists(
@@ -125,7 +121,7 @@ public class MapperMethodInspection extends MapperInspection {
         final PsiIdentifier methodName = method.getNameIdentifier();
 
         if (method.hasModifierProperty(PsiModifier.DEFAULT)) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         if (!JavaService.getInstance(method.getProject()).findStatement(method).isPresent() && null != methodName) {
@@ -137,6 +133,6 @@ public class MapperMethodInspection extends MapperInspection {
                     isOnTheFly));
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 }

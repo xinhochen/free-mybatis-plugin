@@ -1,7 +1,5 @@
 package com.wuzhizhan.mybatis.generate;
 
-
-import cn.kt.DbRemarksCommentGenerator;
 import com.google.common.base.Strings;
 import com.intellij.database.model.RawConnectionConfig;
 import com.intellij.database.psi.DbTable;
@@ -12,6 +10,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
+import com.softwareloop.mybatis.generator.plugins.LombokPlugin;
+import com.wuzhizhan.mybatis.generate.plugin.CommonDAOInterfacePlugin;
+import com.wuzhizhan.mybatis.generate.plugin.DbRemarksCommentGenerator;
+import com.wuzhizhan.mybatis.generate.plugin.GeneratorSwagger2DocPlugin;
+import com.wuzhizhan.mybatis.generate.plugin.JavaTypeResolverJsr310Impl;
+import com.wuzhizhan.mybatis.generate.plugin.MySQLForUpdatePlugin;
+import com.wuzhizhan.mybatis.generate.plugin.MySQLLimitPlugin;
+import com.wuzhizhan.mybatis.generate.plugin.RepositoryPlugin;
 import com.wuzhizhan.mybatis.model.Config;
 import com.wuzhizhan.mybatis.model.DbType;
 import com.wuzhizhan.mybatis.setting.PersistentConfig;
@@ -33,11 +39,11 @@ import java.util.*;
  * 生成mybatis相关代码
  */
 public class MybatisGenerator {
-    private static Logger logger = LoggerFactory.getLogger(MybatisGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(MybatisGenerator.class);
     private String currentDbName;
     private Project project;
     private PersistentConfig persistentConfig;//持久化的配置
-    private Config config;//界面默认配置
+    private final Config config;//界面默认配置
     private DbType dbType;//数据库类型
     private IntellijTableInfo intellijTableInfo;
 
@@ -47,9 +53,6 @@ public class MybatisGenerator {
 
     /**
      * 自动生成的主逻辑
-     *
-     * @param anActionEvent
-     * @throws Exception
      */
     public List<String> execute(final AnActionEvent anActionEvent, boolean saveConfig) throws Exception {
         List<String> result = new ArrayList<>();
@@ -143,7 +146,7 @@ public class MybatisGenerator {
                 Set<String> contexts = new HashSet<>();
                 try {
                     IntellijMyBatisGenerator intellijMyBatisGenerator = new IntellijMyBatisGenerator(configuration, shellCallback, warnings);
-                    intellijMyBatisGenerator.generate(new GeneratorCallback(),contexts,fullyqualifiedTables,intellijTableInfo);
+                    intellijMyBatisGenerator.generate(new GeneratorCallback(), contexts, fullyqualifiedTables, intellijTableInfo);
                     if (!warnings.isEmpty()) {
                         result.addAll(warnings);
                     }
@@ -160,8 +163,6 @@ public class MybatisGenerator {
 
     /**
      * 创建所需目录
-     *
-     * @param config
      */
     private void createFolderForNeed(Config config) {
 
@@ -211,12 +212,8 @@ public class MybatisGenerator {
     }
 
 
-
     /**
      * 生成table配置
-     *
-     * @param context
-     * @return
      */
     private TableConfiguration buildTableConfig(Context context) {
         TableConfiguration tableConfig = new TableConfiguration(context);
@@ -412,12 +409,8 @@ public class MybatisGenerator {
 
     /**
      * 添加相关插件（注意插件文件需要通过jar引入）
-     *
-     * @param context
      */
     private void addPluginConfiguration(Context context) {
-
-
         //实体添加序列化
         PluginConfiguration serializablePlugin = new PluginConfiguration();
         serializablePlugin.addProperty("type", "org.mybatis.generator.plugins.SerializablePlugin");
@@ -438,11 +431,11 @@ public class MybatisGenerator {
 
         // limit/offset插件
         if (config.isOffsetLimit()) {
-            if (DbType.MySQL.equals(dbType)
-                    || DbType.PostgreSQL.equals(dbType)) {
+            if (DbType.MySQL.equals(dbType) || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration mySQLLimitPlugin = new PluginConfiguration();
-                mySQLLimitPlugin.addProperty("type", "cn.kt.MySQLLimitPlugin");
-                mySQLLimitPlugin.setConfigurationType("cn.kt.MySQLLimitPlugin");
+                String pluginClassName = MySQLLimitPlugin.class.getName();
+                mySQLLimitPlugin.addProperty("type", pluginClassName);
+                mySQLLimitPlugin.setConfigurationType(pluginClassName);
                 context.addPluginConfiguration(mySQLLimitPlugin);
             }
         }
@@ -450,46 +443,55 @@ public class MybatisGenerator {
         //for JSR310
         if (config.isJsr310Support()) {
             JavaTypeResolverConfiguration javaTypeResolverPlugin = new JavaTypeResolverConfiguration();
-            javaTypeResolverPlugin.setConfigurationType("cn.kt.JavaTypeResolverJsr310Impl");
+            javaTypeResolverPlugin.setConfigurationType(JavaTypeResolverJsr310Impl.class.getName());
             context.setJavaTypeResolverConfiguration(javaTypeResolverPlugin);
         }
 
         //forUpdate 插件
         if (config.isNeedForUpdate()) {
-            if (DbType.MySQL.equals(dbType)
-                    || DbType.PostgreSQL.equals(dbType)) {
+            if (DbType.MySQL.equals(dbType) || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration mySQLForUpdatePlugin = new PluginConfiguration();
-                mySQLForUpdatePlugin.addProperty("type", "cn.kt.MySQLForUpdatePlugin");
-                mySQLForUpdatePlugin.setConfigurationType("cn.kt.MySQLForUpdatePlugin");
+                String pluginClassName = MySQLForUpdatePlugin.class.getName();
+                mySQLForUpdatePlugin.addProperty("type", pluginClassName);
+                mySQLForUpdatePlugin.setConfigurationType(pluginClassName);
                 context.addPluginConfiguration(mySQLForUpdatePlugin);
             }
         }
 
         //repository 插件
         if (config.isAnnotationDAO()) {
-            if (DbType.MySQL.equals(dbType)
-                    || DbType.PostgreSQL.equals(dbType)) {
+            if (DbType.MySQL.equals(dbType) || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration repositoryPlugin = new PluginConfiguration();
-                repositoryPlugin.addProperty("type", "cn.kt.RepositoryPlugin");
-                repositoryPlugin.setConfigurationType("cn.kt.RepositoryPlugin");
+                String pluginClassName = RepositoryPlugin.class.getName();
+                repositoryPlugin.addProperty("type", pluginClassName);
+                repositoryPlugin.setConfigurationType(pluginClassName);
                 context.addPluginConfiguration(repositoryPlugin);
             }
         }
 
         if (config.isUseDAOExtendStyle()) {//13
-            if (DbType.MySQL.equals(dbType)
-                    || DbType.PostgreSQL.equals(dbType)) {
+            if (DbType.MySQL.equals(dbType) || DbType.PostgreSQL.equals(dbType)) {
                 PluginConfiguration commonDAOInterfacePlugin = new PluginConfiguration();
-                commonDAOInterfacePlugin.addProperty("type", "cn.kt.CommonDAOInterfacePlugin");
-                commonDAOInterfacePlugin.setConfigurationType("cn.kt.CommonDAOInterfacePlugin");
+                String pluginClassName = CommonDAOInterfacePlugin.class.getName();
+                commonDAOInterfacePlugin.addProperty("type", pluginClassName);
+                commonDAOInterfacePlugin.setConfigurationType(pluginClassName);
                 context.addPluginConfiguration(commonDAOInterfacePlugin);
             }
         }
         // Lombok 插件
         if (config.isUseLombokPlugin()) {
             PluginConfiguration pluginConfiguration = new PluginConfiguration();
-            pluginConfiguration.addProperty("type", "com.softwareloop.mybatis.generator.plugins.LombokPlugin");
-            pluginConfiguration.setConfigurationType("com.softwareloop.mybatis.generator.plugins.LombokPlugin");
+            String pluginClassName = LombokPlugin.class.getName();
+            pluginConfiguration.addProperty("type", pluginClassName);
+            pluginConfiguration.setConfigurationType(pluginClassName);
+            context.addPluginConfiguration(pluginConfiguration);
+        }
+        // Swagger 插件
+        if (config.isUseSwaggerPlugin()) {
+            PluginConfiguration pluginConfiguration = new PluginConfiguration();
+            String pluginClassName = GeneratorSwagger2DocPlugin.class.getName();
+            pluginConfiguration.addProperty("type", pluginClassName);
+            pluginConfiguration.setConfigurationType(pluginClassName);
             context.addPluginConfiguration(pluginConfiguration);
         }
 
@@ -497,9 +499,6 @@ public class MybatisGenerator {
 
     /**
      * 获取xml文件路径 用以删除之前的xml
-     *
-     * @param config
-     * @return
      */
     private String getMappingXMLFilePath(Config config) {
         StringBuilder sb = new StringBuilder();

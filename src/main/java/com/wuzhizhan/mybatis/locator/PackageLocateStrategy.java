@@ -4,7 +4,6 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiPackage;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PackageLocateStrategy extends LocateStrategy {
 
-    private PackageProvider provider = new MapperXmlPackageProvider();
+    private final PackageProvider provider = new MapperXmlPackageProvider();
 
     @Override
     public boolean apply(@NotNull PsiClass clazz) {
