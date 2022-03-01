@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -19,18 +17,13 @@ import java.util.function.Supplier;
  * @author yanglin
  */
 public abstract class SimpleLineMarkerProvider<F extends PsiElement, T extends PsiElement> extends MarkerProviderAdaptor {
-
-    @Override
-    public void collectSlowLineMarkers(@NotNull List<? extends PsiElement> elements, @NotNull Collection<? super LineMarkerInfo<?>> result) {
-    }
-
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public LineMarkerInfo<F> getLineMarkerInfo(@NotNull PsiElement element) {
         if (!isTheElement(element)) return null;
 
-        Optional<T> processResult = apply((F) element);
+        Optional<? extends T> processResult = apply((F) element);
         return processResult.map(t -> new LineMarkerInfo<F>(
                 (F) element,
                 element.getTextRange(),
@@ -47,7 +40,7 @@ public abstract class SimpleLineMarkerProvider<F extends PsiElement, T extends P
     }
 
     private GutterIconNavigationHandler<F> getNavigationHandler(final T target) {
-        return (e, from) -> getNavigatable(from, target).navigate(true);
+        return (e, from) -> getNavigable(from, target).navigate(true);
     }
 
     private Supplier<String> getAccessibleNameProvider() {
@@ -57,10 +50,10 @@ public abstract class SimpleLineMarkerProvider<F extends PsiElement, T extends P
     public abstract boolean isTheElement(@NotNull PsiElement element);
 
     @NotNull
-    public abstract Optional<T> apply(@NotNull F from);
+    public abstract Optional<? extends T> apply(@NotNull F from);
 
     @NotNull
-    public abstract Navigatable getNavigatable(@NotNull F from, @NotNull T target);
+    public abstract Navigatable getNavigable(@NotNull F from, @NotNull T target);
 
     @NotNull
     public abstract String getTooltip(@NotNull F from, @NotNull T target);

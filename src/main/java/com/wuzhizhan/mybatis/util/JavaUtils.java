@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,7 +73,7 @@ public final class JavaUtils {
     }
 
     @NotNull
-    public static Optional<PsiMethod> findMethod(@NotNull Project project, @Nullable String clazzName, @Nullable String methodName) {
+    public static Optional<PsiMethod> findMethod(@NotNull Project project, @NotNull String clazzName, @Nullable String methodName) {
         if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
             return Optional.empty();
         }
@@ -108,7 +109,7 @@ public final class JavaUtils {
             return Optional.empty();
         }
         Optional<PsiAnnotation> psiAnnotation = getPsiAnnotation(target, annotation);
-        return psiAnnotation.isPresent() ? Optional.ofNullable(psiAnnotation.get().findAttributeValue(attrName)) : Optional.empty();
+        return psiAnnotation.map(value -> value.findAttributeValue(attrName));
     }
 
     @NotNull
@@ -118,7 +119,7 @@ public final class JavaUtils {
 
     public static Optional<String> getAnnotationValueText(@NotNull PsiModifierListOwner target, @NotNull Annotation annotation) {
         Optional<PsiAnnotationMemberValue> annotationValue = getAnnotationValue(target, annotation);
-        return annotationValue.isPresent() ? Optional.of(annotationValue.get().getText().replaceAll("\"", "")) : Optional.empty();
+        return annotationValue.map(psiAnnotationMemberValue -> psiAnnotationMemberValue.getText().replaceAll("\"", ""));
     }
 
     public static boolean isAnyAnnotationPresent(@NotNull PsiModifierListOwner target, @NotNull Set<Annotation> annotations) {
@@ -147,7 +148,7 @@ public final class JavaUtils {
         }
         PsiImportStatement[] statements = importList.getImportStatements();
         for (PsiImportStatement tmp : statements) {
-            if (null != tmp && tmp.getQualifiedName().equals(clazzName)) {
+            if (null != tmp && Objects.equals(tmp.getQualifiedName(), clazzName)) {
                 return true;
             }
         }
