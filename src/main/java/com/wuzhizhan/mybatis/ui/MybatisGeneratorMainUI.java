@@ -77,7 +77,7 @@ public class MybatisGeneratorMainUI extends JFrame {
 
     public MybatisGeneratorMainUI(AnActionEvent anActionEvent) throws HeadlessException {
         this.anActionEvent = anActionEvent;
-        this.project = anActionEvent.getData(PlatformDataKeys.PROJECT);
+        this.project = anActionEvent.getProject();
         PersistentConfig persistentConfig = PersistentConfig.getInstance(project);
         this.psiElements = anActionEvent.getData(LangDataKeys.PSI_ELEMENT_ARRAY);
 
