@@ -5,7 +5,9 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.psi.PsiPackage;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 import com.intellij.ui.components.JBTextField;
@@ -20,11 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MybatisGeneratorSettingUI extends JDialog {
-    public JPanel contentPanel = new JBPanel<>(new GridLayout(1, 1));
+    public JPanel contentPanel = new JBPanel<>(new VerticalFlowLayout());
 
-
-    private final JBTextField modelPackageField = new JBTextField(12);
-    private final JBTextField daoPackageField = new JBTextField(12);
+    private final TextFieldWithPackageButton modelPackageField = new TextFieldWithPackageButton();
+    private final TextFieldWithPackageButton daoPackageField = new TextFieldWithPackageButton();
     private final JBTextField xmlPackageField = new JBTextField(12);
     private final JTextField daoPostfixField = new JTextField(10);
 
@@ -60,14 +61,14 @@ public class MybatisGeneratorSettingUI extends JDialog {
 
     public void createUI(Project project) {
         String projectFolder = project.getBasePath();
-        contentPanel.setPreferredSize(new Dimension(0, 0));
+        contentPanel.setAutoscrolls(true);
 
         /*
          * project folder
          */
         JPanel projectFolderPanel = new JPanel();
         projectFolderPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel projectLabel = new JLabel("project folder:");
+        JLabel projectLabel = new JLabel("Project folder:");
         projectFolderPanel.add(projectLabel);
         projectFolderBtn.setTextFieldPreferredWidth(45);
         projectFolderBtn.setText(projectFolder);
@@ -84,54 +85,50 @@ public class MybatisGeneratorSettingUI extends JDialog {
 
 
         /*
-         * mode panel
+         * model panel
          */
-        JPanel modelPanel = new JPanel();
-        modelPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        modelPanel.setBorder(BorderFactory.createTitledBorder("model setting"));
-        JBLabel labelLeft4 = new JBLabel("package:");
+        JPanel modelPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        modelPanel.setBorder(IdeBorderFactory.createTitledBorder("Model Setting"));
+
+        JBLabel labelLeft4 = new JBLabel("Package:");
         modelPanel.add(labelLeft4);
         modelPanel.add(modelPackageField);
-        JButton packageBtn1 = new JButton("...");
-        packageBtn1.addActionListener(actionEvent -> {
-            final PackageChooserDialog chooser = new PackageChooserDialog("chooser model package", project);
+        modelPackageField.addActionListener(actionEvent -> {
+            final PackageChooserDialog chooser = new PackageChooserDialog("Choose Model Package", project);
             chooser.selectPackage(modelPackageField.getText());
             chooser.show();
             final PsiPackage psiPackage = chooser.getSelectedPackage();
             String packageName = psiPackage == null ? null : psiPackage.getQualifiedName();
             modelPackageField.setText(packageName);
         });
-        modelPanel.add(packageBtn1);
-        modelPanel.add(new JLabel("path:"));
+
+        modelPanel.add(new JLabel("Path:"));
         modelMvnField.setText("src/main/java");
         modelPanel.add(modelMvnField);
 
         /*
          * dao panel
          */
-        JPanel daoPanel = new JPanel();
-        daoPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        daoPanel.setBorder(BorderFactory.createTitledBorder("dao setting"));
+        JPanel daoPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        daoPanel.setBorder(IdeBorderFactory.createTitledBorder("DAO Setting"));
 
-        daoPanel.add(new JLabel("dao postfix:"));
+        daoPanel.add(new JLabel("DAO postfix:"));
         daoPostfixField.setText("Dao");
         daoPanel.add(daoPostfixField);
 
-        JLabel labelLeft5 = new JLabel("package:");
-        daoPanel.add(labelLeft5);
+        daoPanel.add(new JLabel("Package:"));
         daoPanel.add(daoPackageField);
 
-        JButton packageBtn2 = new JButton("...");
-        packageBtn2.addActionListener(actionEvent -> {
-            final PackageChooserDialog chooser = new PackageChooserDialog("choose dao package", project);
+        daoPackageField.addActionListener(actionEvent -> {
+            final PackageChooserDialog chooser = new PackageChooserDialog("Choose DAO Package", project);
             chooser.selectPackage(daoPackageField.getText());
             chooser.show();
             final PsiPackage psiPackage = chooser.getSelectedPackage();
             String packageName = psiPackage == null ? null : psiPackage.getQualifiedName();
             daoPackageField.setText(packageName);
         });
-        daoPanel.add(packageBtn2);
-        daoPanel.add(new JLabel("path:"));
+
+        daoPanel.add(new JLabel("Path:"));
         daoMvnField.setText("src/main/java");
         daoPanel.add(daoMvnField);
 
@@ -139,13 +136,13 @@ public class MybatisGeneratorSettingUI extends JDialog {
         /*
          * xml mapper panel
          */
-        JPanel xmlMapperPanel = new JPanel();
-        xmlMapperPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        xmlMapperPanel.setBorder(BorderFactory.createTitledBorder("xml mapper setting"));
-        JLabel labelLeft6 = new JLabel("package:");
-        xmlMapperPanel.add(labelLeft6);
+        JPanel xmlMapperPanel =new JPanel(new GridLayout(2, 2, 5, 5));
+        xmlMapperPanel.setBorder(IdeBorderFactory.createTitledBorder("XML Mapper Setting"));
+
+        xmlMapperPanel.add(new JLabel("Package:"));
         xmlMapperPanel.add(xmlPackageField);
-        xmlMapperPanel.add(new JLabel("path:"));
+
+        xmlMapperPanel.add(new JLabel("Path:"));
         xmlMvnField.setText("src/main/resources");
         xmlMapperPanel.add(xmlMvnField);
 
@@ -153,8 +150,8 @@ public class MybatisGeneratorSettingUI extends JDialog {
         /*
          * options panel
          */
-        JBPanel<?> optionsPanel = new JBPanel<>(new GridLayout(5, 5, 5, 5));
-        optionsPanel.setBorder(BorderFactory.createTitledBorder("options panel"));
+        JBPanel<?> optionsPanel = new JBPanel<>(new GridLayout(8, 2, 5, 5));
+        optionsPanel.setBorder(IdeBorderFactory.createTitledBorder("Options"));
 
         commentBox.setSelected(true);
         overrideXMLBox.setSelected(true);
@@ -182,7 +179,7 @@ public class MybatisGeneratorSettingUI extends JDialog {
         /*
          * 设置面板内容
          */
-        JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel mainPanel = new JPanel(new VerticalFlowLayout());
         mainPanel.add(projectFolderPanel);
         mainPanel.add(modelPanel);
         mainPanel.add(daoPanel);
@@ -217,8 +214,8 @@ public class MybatisGeneratorSettingUI extends JDialog {
             useLombokBox.setSelected(config.isUseLombokPlugin());
             useSwaggerBox.setSelected(config.isUseSwaggerPlugin());
         } else {
-            modelPackageField.addFocusListener(new JTextFieldHintListener(modelPackageField, "generator"));
-            daoPackageField.addFocusListener(new JTextFieldHintListener(daoPackageField, "generator"));
+            modelPackageField.addFocusListener(new JTextFieldHintListener(modelPackageField.getTextField(), "generator"));
+            daoPackageField.addFocusListener(new JTextFieldHintListener(daoPackageField.getTextField(), "generator"));
             xmlPackageField.addFocusListener(new JTextFieldHintListener(xmlPackageField, "generator"));
         }
     }
@@ -269,18 +266,13 @@ public class MybatisGeneratorSettingUI extends JDialog {
         config.setUseSwaggerPlugin(useSwaggerBox.getSelectedObjects() != null);
         initConfig.put(config.getName(), config);
         this.config.setInitConfig(initConfig);
-
-
     }
 
     public void reset() {
-
     }
 
     @Override
     public JPanel getContentPane() {
         return contentPanel;
     }
-
-
 }
