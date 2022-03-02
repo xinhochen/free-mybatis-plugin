@@ -8,7 +8,6 @@ import com.intellij.database.psi.DbTable;
 import com.intellij.database.util.DasUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.JBIterable;
-import com.rits.cloning.Cloner;
 import org.jetbrains.annotations.NotNull;
 import org.mybatis.generator.api.intellij.IntellijColumnInfo;
 import org.mybatis.generator.api.intellij.IntellijTableInfo;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbToolsUtils {
-    private static final Cloner myCloner = new Cloner();
-
     public static IntellijTableInfo buildIntellijTableInfo(DbTable currentTable) {
         IntellijTableInfo tableInfo = new IntellijTableInfo();
         tableInfo.setTableName(currentTable.getName());
@@ -43,7 +40,7 @@ public class DbToolsUtils {
                 String columnName = iterate.next();
                 for (IntellijColumnInfo intellijColumnInfo : intellijColumnInfos) {
                     if (columnName.equals(intellijColumnInfo.getName())) {
-                        IntellijColumnInfo info = myCloner.deepClone(intellijColumnInfo);
+                        IntellijColumnInfo info = clone(intellijColumnInfo);
                         info.setKeySeq(s);
                         primaryColumnInfos.add(info);
                         s++;
@@ -56,6 +53,21 @@ public class DbToolsUtils {
 
         tableInfo.setPrimaryKeyColumns(primaryColumnInfos);
         return tableInfo;
+    }
+
+    private static IntellijColumnInfo clone(IntellijColumnInfo info) {
+        IntellijColumnInfo result = new IntellijColumnInfo();
+        result.setName(info.getName());
+        result.setDataType(info.getDataType());
+        result.setGeneratedColumn(info.isGeneratedColumn());
+        result.setAutoIncrement(info.isAutoIncrement());
+        result.setSize(info.getSize());
+        result.setDecimalDigits(info.getDecimalDigits());
+        result.setRemarks(info.getRemarks());
+        result.setColumnDefaultValue(info.getColumnDefaultValue());
+        result.setNullable(info.getNullable());
+        result.setKeySeq(info.getKeySeq());
+        return result;
     }
 
 
