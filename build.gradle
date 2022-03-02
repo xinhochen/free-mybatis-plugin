@@ -11,7 +11,7 @@ plugins {
 }
 
 group 'cn.wuzhizhan.idea.mybatis'
-version '2022.02.28'
+version '2022.03.02'
 sourceCompatibility = 1.8
 
 repositories {
@@ -34,10 +34,11 @@ intellij {
 }
 patchPluginXml {
     changeNotes = """
-        <h4>2022.02.28</h4>
+        <h4>2022.03.02</h4>
         <ul>
             <li>feature: Support 2021.3.2</li>
             <li>feature: Support Spring Boot</li>
+            <li>feature: Adjust UI</li>
         </ul>
         <h4>2020.12.24</h4>
         <ul>
