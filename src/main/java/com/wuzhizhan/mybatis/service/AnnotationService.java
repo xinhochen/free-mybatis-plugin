@@ -1,6 +1,5 @@
 package com.wuzhizhan.mybatis.service;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
@@ -13,14 +12,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnnotationService {
 
-    private Project project;
+    private final Project project;
 
     public AnnotationService(Project project) {
         this.project = project;
     }
 
     public static AnnotationService getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, AnnotationService.class);
+        return project.getService(AnnotationService.class);
     }
 
     public void addAnnotation(@NotNull PsiModifierListOwner parameter, @NotNull Annotation annotation) {

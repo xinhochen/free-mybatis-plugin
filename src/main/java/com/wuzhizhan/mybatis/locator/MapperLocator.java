@@ -1,6 +1,5 @@
 package com.wuzhizhan.mybatis.locator;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
@@ -16,7 +15,7 @@ public class MapperLocator {
     public static LocateStrategy dfltLocateStrategy = new PackageLocateStrategy();
 
     public static MapperLocator getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, MapperLocator.class);
+        return project.getService(MapperLocator.class);
     }
 
     public boolean process(@Nullable PsiMethod method) {

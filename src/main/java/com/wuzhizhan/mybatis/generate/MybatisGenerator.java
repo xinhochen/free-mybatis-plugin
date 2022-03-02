@@ -8,13 +8,15 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.softwareloop.mybatis.generator.plugins.LombokPlugin;
 import com.wuzhizhan.mybatis.generate.plugin.CommonDAOInterfacePlugin;
 import com.wuzhizhan.mybatis.generate.plugin.DbRemarksCommentGenerator;
 import com.wuzhizhan.mybatis.generate.plugin.GeneratorSwagger2DocPlugin;
 import com.wuzhizhan.mybatis.generate.plugin.JavaTypeResolverJsr310Impl;
+import com.wuzhizhan.mybatis.generate.plugin.LombokPlugin;
 import com.wuzhizhan.mybatis.generate.plugin.MySQLForUpdatePlugin;
 import com.wuzhizhan.mybatis.generate.plugin.MySQLLimitPlugin;
 import com.wuzhizhan.mybatis.generate.plugin.RepositoryPlugin;
@@ -33,7 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 生成mybatis相关代码
@@ -56,7 +63,7 @@ public class MybatisGenerator {
      */
     public List<String> execute(final AnActionEvent anActionEvent, boolean saveConfig) throws Exception {
         List<String> result = new ArrayList<>();
-        this.project = anActionEvent.getData(PlatformDataKeys.PROJECT);
+        this.project = anActionEvent.getProject();
         this.persistentConfig = PersistentConfig.getInstance(project);
 
         if (saveConfig) {
@@ -151,11 +158,16 @@ public class MybatisGenerator {
                         result.addAll(warnings);
                     }
                 } catch (Exception e) {
-                    Messages.showMessageDialog(e.getMessage(), "MybatisGenerator failure", Messages.getErrorIcon());
+                    Messages.showMessageDialog(e.getMessage(), "MybatisGenerator Failure", Messages.getErrorIcon());
                     result.add(e.getMessage());
                 }
-                project.getBaseDir().refresh(true, true);
-                project.getBaseDir().refresh(false, true);
+                // project.getBaseDir().refresh(true, true);
+                // project.getBaseDir().refresh(false, true);
+                VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
+                if (baseDir != null) {
+                    baseDir.refresh(true, true);
+                    baseDir.refresh(false, true);
+                }
             }
         });
         return result;

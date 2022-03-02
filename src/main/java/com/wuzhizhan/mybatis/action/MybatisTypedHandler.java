@@ -2,10 +2,10 @@ package com.wuzhizhan.mybatis.action;
 
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.wuzhizhan.mybatis.util.DomUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class MybatisTypedHandler extends TypedHandlerDelegate {
     @Override
     public Result charTyped(char c, final Project project, @NotNull final Editor editor, @NotNull PsiFile file) {
         int index = editor.getCaretModel().getOffset() - 2;
-        PsiFile topLevelFile = InjectedLanguageUtil.getTopLevelFile(file);
+        PsiFile topLevelFile = InjectedLanguageManager.getInstance(project).getTopLevelFile(file);
         boolean parameterCase = c == '{' &&
                 index >= 0 &&
                 editor.getDocument().getText().charAt(index) == '#' &&

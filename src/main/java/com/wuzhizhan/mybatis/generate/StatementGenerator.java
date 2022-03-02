@@ -74,11 +74,9 @@ public abstract class StatementGenerator {
     }
 
     private static void doGenerate(@NotNull final StatementGenerator generator, @NotNull final PsiMethod method) {
-        (new WriteCommandAction.Simple(method.getProject(), new PsiFile[]{method.getContainingFile()}) {
-            protected void run() throws Throwable {
-                generator.execute(method);
-            }
-        }).execute();
+        WriteCommandAction.writeCommandAction(method.getProject(), method.getContainingFile()).run(() -> {
+            generator.execute(method);
+        });
     }
 
     public static void applyGenerate(@Nullable final PsiMethod method) {

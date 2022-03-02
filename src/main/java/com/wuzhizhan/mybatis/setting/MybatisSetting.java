@@ -2,8 +2,8 @@ package com.wuzhizhan.mybatis.setting;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.wuzhizhan.mybatis.generate.GenerateModel;
@@ -14,21 +14,24 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.*;
+import static com.wuzhizhan.mybatis.generate.StatementGenerator.DELETE_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerator.INSERT_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerator.SELECT_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerator.UPDATE_GENERATOR;
 
 /**
  * @author yanglin
  */
 @State(
         name = "MybatisSettings",
-        storages = @Storage(file = "$APP_CONFIG$/mybatis.xml"))
+        storages = @Storage(value = "$APP_CONFIG$/mybatis.xml"))
 public class MybatisSetting implements PersistentStateComponent<Element> {
 
     private GenerateModel statementGenerateModel;
 
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
-    private Type gsonTypeToken = new TypeToken<Set<String>>() {
+    private final Type gsonTypeToken = new TypeToken<Set<String>>() {
     }.getType();
 
     public MybatisSetting() {
@@ -36,7 +39,7 @@ public class MybatisSetting implements PersistentStateComponent<Element> {
     }
 
     public static MybatisSetting getInstance() {
-        return ServiceManager.getService(MybatisSetting.class);
+        return ApplicationManager.getApplication().getService(MybatisSetting.class);
     }
 
     @Nullable
@@ -63,7 +66,7 @@ public class MybatisSetting implements PersistentStateComponent<Element> {
     private void loadState(Element state, StatementGenerator generator) {
         String attribute = state.getAttributeValue(generator.getId());
         if (null != attribute) {
-            generator.setPatterns((Set<String>) gson.fromJson(attribute, gsonTypeToken));
+            generator.setPatterns(gson.fromJson(attribute, gsonTypeToken));
         }
     }
 

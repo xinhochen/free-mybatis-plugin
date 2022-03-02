@@ -1,15 +1,14 @@
 package com.wuzhizhan.mybatis.service;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.formatting.FormatTextRanges;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.impl.source.codeStyle.CodeFormatterFacade;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,11 +17,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EditorService {
 
-    private Project project;
+    private final Project project;
 
-    private FileEditorManager fileEditorManager;
-
-    private CodeFormatterFacade codeFormatterFacade;
+    private final FileEditorManager fileEditorManager;
 
     public EditorService(Project project) {
         this.project = project;
@@ -30,11 +27,11 @@ public class EditorService {
     }
 
     public static EditorService getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, EditorService.class);
+        return project.getService(EditorService.class);
     }
 
     public void format(@NotNull PsiFile file, @NotNull PsiElement element) {
-        this.codeFormatterFacade = new CodeFormatterFacade(CodeStyleSettingsManager.getSettings(element.getProject()), element.getLanguage());
+        CodeFormatterFacade codeFormatterFacade = new CodeFormatterFacade(CodeStyle.getSettings(element.getProject()), element.getLanguage());
         codeFormatterFacade.processText(file, new FormatTextRanges(element.getTextRange(), true), true);
     }
 

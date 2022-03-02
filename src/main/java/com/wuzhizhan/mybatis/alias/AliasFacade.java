@@ -1,7 +1,6 @@
 package com.wuzhizhan.mybatis.alias;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -20,14 +19,14 @@ import java.util.Optional;
  */
 public class AliasFacade {
 
-    private Project project;
+    private final Project project;
 
-    private JavaPsiFacade javaPsiFacade;
+    private final JavaPsiFacade javaPsiFacade;
 
-    private List<AliasResolver> resolvers;
+    private final List<AliasResolver> resolvers;
 
-    public static final AliasFacade getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, AliasFacade.class);
+    public static AliasFacade getInstance(@NotNull Project project) {
+        return project.getService(AliasFacade.class);
     }
 
     public AliasFacade(Project project) {

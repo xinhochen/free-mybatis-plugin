@@ -2,13 +2,13 @@ package com.wuzhizhan.mybatis.setting;
 
 
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.wuzhizhan.mybatis.model.Config;
 import com.wuzhizhan.mybatis.model.User;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ public class PersistentConfig implements PersistentStateComponent<PersistentConf
 
     @Nullable
     public static PersistentConfig getInstance(Project project) {
-        return ServiceManager.getService(project, PersistentConfig.class);
+        return project.getService(PersistentConfig.class);
     }
 
     @Nullable
@@ -35,7 +35,7 @@ public class PersistentConfig implements PersistentStateComponent<PersistentConf
     }
 
     @Override
-    public void loadState(PersistentConfig persistentConfig) {
+    public void loadState(@NotNull PersistentConfig persistentConfig) {
         XmlSerializerUtil.copyBean(persistentConfig, this);
     }
 

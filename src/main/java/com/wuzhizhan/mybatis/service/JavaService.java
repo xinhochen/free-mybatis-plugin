@@ -1,6 +1,5 @@
 package com.wuzhizhan.mybatis.service;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
@@ -21,11 +20,11 @@ import java.util.Optional;
  */
 public class JavaService {
 
-    private Project project;
+    private final Project project;
 
-    private JavaPsiFacade javaPsiFacade;
+    private final JavaPsiFacade javaPsiFacade;
 
-    private EditorService editorService;
+    private final EditorService editorService;
 
     public JavaService(Project project) {
         this.project = project;
@@ -34,7 +33,7 @@ public class JavaService {
     }
 
     public static JavaService getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, JavaService.class);
+        return project.getService(JavaService.class);
     }
 
     public Optional<PsiClass> getReferenceClazzOfPsiField(@NotNull PsiElement field) {

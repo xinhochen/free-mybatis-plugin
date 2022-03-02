@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -100,7 +101,7 @@ public class GenerateMapperIntention extends GenericIntention {
 
     private void handleChooseNewFolder(Project project, Editor editor, PsiClass clazz) {
         UiComponentFacade uiComponentFacade = UiComponentFacade.getInstance(project);
-        VirtualFile baseDir = project.getBaseDir();
+        VirtualFile baseDir = ProjectUtil.guessProjectDir(project);
         VirtualFile vf = uiComponentFacade.showSingleFolderSelectionDialog("Select target folder", baseDir, baseDir);
         if (null != vf) {
             processGenerate(editor, clazz, PsiManager.getInstance(project).findDirectory(vf));
@@ -118,16 +119,14 @@ public class GenerateMapperIntention extends GenericIntention {
                 return null == module ? relativePath : ("[" + module.getName() + "] " + relativePath);
             }
         }));
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 
     private Map<String, PsiDirectory> getPathMap(Collection<PsiDirectory> directories) {
         Map<String, PsiDirectory> result = Maps.newHashMap();
         for (PsiDirectory directory : directories) {
             String presentableUrl = directory.getVirtualFile().getPresentableUrl();
-            if (presentableUrl != null) {
-                result.put(presentableUrl, directory);
-            }
+            result.put(presentableUrl, directory);
         }
         return result;
     }
