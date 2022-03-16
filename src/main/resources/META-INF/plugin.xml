@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>cn.wuzhizhan.idea.mybatis.free-idea-mybatis</id>
-    <name>Free IDEA Mybatis</name>
+    <name>Free Enhanced MyBatis</name>
     <vendor email="xinhochen@gmail.com" url="https://github.com/xinhochen/free-mybatis-plugin">xinhochen</vendor>
 
     <version>2020.12.18</version>
@@ -28,7 +28,7 @@
     ]]></change-notes>
 
     <description><![CDATA[
-        free-idea-mybatis is an enhanced plugin for IDEA to support MyBatis, based on previous plugin <b>Free Mybatis Plugin</b>. <br/>
+        This is an enhanced plugin for IDEA to support MyBatis, based on previous plugin <b>Free Mybatis Plugin</b>. <br/>
         here is the main features:</br>
         <ul>
             <li>generate mapper xml files</li>
@@ -38,7 +38,7 @@
             <li>generate swagger model annotation</li>
         </ul>
 
-        free-idea-mybatis是一款增强IDEA对mybatis支持的插件，基于之前的插件<b>Free Mybatis Plugin</b>做了修改，主要功能如下：<br/>
+        这是一款增强IDEA对mybatis支持的插件，基于之前的插件<b>Free Mybatis Plugin</b>做了修改，主要功能如下：<br/>
         <ul>
             <li>生成mapper xml文件</li>
             <li>快速从代码跳转到mapper及从mapper返回代码</li>
