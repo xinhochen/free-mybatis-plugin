@@ -9,15 +9,16 @@ import com.intellij.openapi.components.Storage;
 import com.wuzhizhan.mybatis.generate.GenerateModel;
 import com.wuzhizhan.mybatis.generate.StatementGenerator;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.DELETE_GENERATOR;
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.INSERT_GENERATOR;
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.SELECT_GENERATOR;
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.UPDATE_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerators.DELETE_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerators.INSERT_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerators.SELECT_GENERATOR;
+import static com.wuzhizhan.mybatis.generate.StatementGenerators.UPDATE_GENERATOR;
 
 /**
  * @author yanglin
@@ -55,7 +56,7 @@ public class MybatisSetting implements PersistentStateComponent<Element> {
     }
 
     @Override
-    public void loadState(Element state) {
+    public void loadState(@NotNull Element state) {
         loadState(state, INSERT_GENERATOR);
         loadState(state, DELETE_GENERATOR);
         loadState(state, UPDATE_GENERATOR);

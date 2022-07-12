@@ -1,14 +1,13 @@
 package com.wuzhizhan.mybatis.generate;
 
-import com.google.common.base.Function;
-import com.google.common.collect.*;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.PopupStep;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.CommonProcessors.CollectProcessor;
@@ -16,41 +15,32 @@ import com.wuzhizhan.mybatis.dom.model.GroupTwo;
 import com.wuzhizhan.mybatis.dom.model.Mapper;
 import com.wuzhizhan.mybatis.service.EditorService;
 import com.wuzhizhan.mybatis.service.JavaService;
-import com.wuzhizhan.mybatis.setting.MybatisSetting;
 import com.wuzhizhan.mybatis.ui.ListSelectionListener;
 import com.wuzhizhan.mybatis.ui.UiComponentFacade;
-import com.wuzhizhan.mybatis.util.CollectionUtils;
 import com.wuzhizhan.mybatis.util.JavaUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author yanglin
  */
 public abstract class StatementGenerator {
 
-    public static final StatementGenerator UPDATE_GENERATOR = new UpdateGenerator("update", "modify", "set");
-
-    public static final StatementGenerator SELECT_GENERATOR = new SelectGenerator("select", "get", "look", "find", "list", "search", "count", "query");
-
-    public static final StatementGenerator DELETE_GENERATOR = new DeleteGenerator("del", "cancel");
-
-    public static final StatementGenerator INSERT_GENERATOR = new InsertGenerator("insert", "add", "new");
-
-    public static final Set<StatementGenerator> ALL = ImmutableSet.of(UPDATE_GENERATOR, SELECT_GENERATOR, DELETE_GENERATOR, INSERT_GENERATOR);
-
-    private static final Function<Mapper, String> FUN = new Function<Mapper, String>() {
-        @Override
-        public String apply(Mapper mapper) {
-            VirtualFile vf = mapper.getXmlTag().getContainingFile().getVirtualFile();
-            if (null == vf) return "";
-            return vf.getCanonicalPath();
+    private static final Function<Mapper, String> FUN = mapper -> {
+        XmlTag xmlTag = mapper.getXmlTag();
+        if (xmlTag == null) {
+            return "";
         }
+        VirtualFile vf = xmlTag.getContainingFile().getVirtualFile();
+        if (null == vf) {
+            return "";
+        }
+        return vf.getCanonicalPath();
     };
 
     public static Optional<PsiClass> getSelectResultType(@Nullable PsiMethod method) {
@@ -58,8 +48,12 @@ public abstract class StatementGenerator {
             return Optional.empty();
         }
         PsiType returnType = method.getReturnType();
-        if (returnType instanceof PsiPrimitiveType && returnType != PsiType.VOID) {
-            return JavaUtils.findClazz(method.getProject(), ((PsiPrimitiveType) returnType).getBoxedTypeName());
+        if (returnType instanceof PsiPrimitiveType && !PsiType.VOID.equals(returnType)) {
+            String boxedTypeName = ((PsiPrimitiveType) returnType).getBoxedTypeName();
+            if (boxedTypeName == null) {
+                return Optional.empty();
+            }
+            return JavaUtils.findClazz(method.getProject(), boxedTypeName);
         } else if (returnType instanceof PsiClassReferenceType) {
             PsiClassReferenceType type = (PsiClassReferenceType) returnType;
             if (type.hasParameters()) {
@@ -73,51 +67,6 @@ public abstract class StatementGenerator {
         return Optional.empty();
     }
 
-    private static void doGenerate(@NotNull final StatementGenerator generator, @NotNull final PsiMethod method) {
-        WriteCommandAction.writeCommandAction(method.getProject(), method.getContainingFile()).run(() -> {
-            generator.execute(method);
-        });
-    }
-
-    public static void applyGenerate(@Nullable final PsiMethod method) {
-        if (null == method) return;
-        final Project project = method.getProject();
-        final Object[] generators = getGenerators(method);
-        if (1 == generators.length) {
-            ((StatementGenerator) generators[0]).execute(method);
-        } else {
-            JBPopupFactory.getInstance().createListPopup(
-                    new BaseListPopupStep("[ Statement type for method: " + method.getName() + "]", generators) {
-                        @Override
-                        public PopupStep onChosen(Object selectedValue, boolean finalChoice) {
-                            return this.doFinalStep(new Runnable() {
-                                public void run() {
-                                    WriteCommandAction.runWriteCommandAction(project, new Runnable() {
-                                        public void run() {
-                                            StatementGenerator.doGenerate((StatementGenerator) selectedValue, method);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    }
-            ).showInFocusCenter();
-        }
-    }
-
-    @NotNull
-    public static StatementGenerator[] getGenerators(@NotNull PsiMethod method) {
-        GenerateModel model = MybatisSetting.getInstance().getStatementGenerateModel();
-        String target = method.getName();
-        List<StatementGenerator> result = Lists.newArrayList();
-        for (StatementGenerator generator : ALL) {
-            if (model.matchesAny(generator.getPatterns(), target)) {
-                result.add(generator);
-            }
-        }
-        return CollectionUtils.isNotEmpty(result) ? result.toArray(new StatementGenerator[result.size()]) : ALL.toArray(new StatementGenerator[ALL.size()]);
-    }
-
     private Set<String> patterns;
 
     public StatementGenerator(@NotNull String... patterns) {
@@ -127,13 +76,12 @@ public abstract class StatementGenerator {
     public void execute(@NotNull final PsiMethod method) {
         PsiClass psiClass = method.getContainingClass();
         if (null == psiClass) return;
-        CollectProcessor processor = new CollectProcessor();
-        JavaService.getInstance(method.getProject()).process(psiClass, processor);
+        CollectProcessor<Mapper> processor = new CollectProcessor<>();
+        JavaService.getInstance(method.getProject()).processClass(psiClass, processor);
         final List<Mapper> mappers = Lists.newArrayList(processor.getResults());
         if (1 == mappers.size()) {
             setupTag(method, (Mapper) Iterables.getOnlyElement(mappers, (Object) null));
         } else if (mappers.size() > 1) {
-            Collection<String> paths = Collections2.transform(mappers, FUN);
             UiComponentFacade.getInstance(method.getProject()).showListPopup("Choose target mapper xml to generate", new ListSelectionListener() {
                 @Override
                 public void selected(int index) {
@@ -144,7 +92,7 @@ public abstract class StatementGenerator {
                 public boolean isWriteAction() {
                     return true;
                 }
-            }, paths.toArray(new String[paths.size()]));
+            }, mappers.stream().map(FUN).toArray(String[]::new));
         }
     }
 
@@ -153,6 +101,9 @@ public abstract class StatementGenerator {
         target.getId().setStringValue(method.getName());
         target.setValue(" ");
         XmlTag tag = target.getXmlTag();
+        if (tag == null) {
+            return;
+        }
         int offset = tag.getTextOffset() + tag.getTextLength() - tag.getName().length() + 1;
         EditorService editorService = EditorService.getInstance(method.getProject());
         editorService.format(tag.getContainingFile(), tag);

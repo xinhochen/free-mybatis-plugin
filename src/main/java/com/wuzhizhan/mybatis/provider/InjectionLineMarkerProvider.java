@@ -13,6 +13,8 @@ import com.wuzhizhan.mybatis.util.JavaUtils;
 import com.wuzhizhan.mybatis.util.MapperUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UastUtils;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -24,18 +26,27 @@ public class InjectionLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
-        if (!(element instanceof PsiField)) return;
-        PsiField field = (PsiField) element;
+        UElement uElement = UastUtils.getUParentForIdentifier(element);
+        if (uElement == null) {
+            return;
+        }
+
+        PsiElement identifier = uElement.getJavaPsi();
+        if (identifier == null) {
+            return;
+        }
+        if (!(identifier instanceof PsiField)) return;
+        PsiField field = (PsiField) identifier;
         if (!isTargetField(field)) return;
 
         PsiType type = field.getType();
         if (!(type instanceof PsiClassReferenceType)) return;
 
-        Optional<PsiClass> clazz = JavaUtils.findClazz(element.getProject(), type.getCanonicalText());
+        Optional<PsiClass> clazz = JavaUtils.findClazz(identifier.getProject(), type.getCanonicalText());
         if (!clazz.isPresent()) return;
 
         PsiClass psiClass = clazz.get();
-        Optional<Mapper> mapper = MapperUtils.findFirstMapper(element.getProject(), psiClass);
+        Optional<Mapper> mapper = MapperUtils.findFirstMapper(identifier.getProject(), psiClass);
         if (!mapper.isPresent()) return;
 
         NavigationGutterIconBuilder<PsiElement> builder =

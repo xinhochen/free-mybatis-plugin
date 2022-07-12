@@ -3,8 +3,12 @@
     <name>Free Enhanced MyBatis</name>
     <vendor email="xinhochen@gmail.com" url="https://github.com/xinhochen/free-mybatis-plugin">xinhochen</vendor>
 
-    <version>2020.12.18</version>
+    <version>2022.07.12</version>
     <change-notes><![CDATA[
+        <h4>2022.07.12</h4>
+        <ul>
+            <li>feature: Support navigation for Kotlin</li>
+        </ul>
         <h4>2022.03.02</h4>
         <ul>
             <li>feature: Support 2021.3.2</li>
@@ -47,7 +51,7 @@
             <li>根据数据库注解，生成swagger model注解</li>
         </ul>
     ]]></description>
-    <idea-version since-build="203"/>
+    <idea-version since-build="203.6682.168"/>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
@@ -67,9 +71,9 @@
         <projectService serviceImplementation="com.wuzhizhan.mybatis.alias.AliasFacade"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.locator.MapperLocator"/>
         <projectService serviceImplementation="com.wuzhizhan.mybatis.service.TableInfoService"/>
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.wuzhizhan.mybatis.provider.MapperLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="XML" implementationClass="com.wuzhizhan.mybatis.provider.StatementLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.wuzhizhan.mybatis.provider.InjectionLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="UAST" implementationClass="com.wuzhizhan.mybatis.provider.MapperLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="UAST" implementationClass="com.wuzhizhan.mybatis.provider.InjectionLineMarkerProvider"/>
         <applicationConfigurable groupId="tools" instance="com.wuzhizhan.mybatis.setting.MybatisConfigurable"/>
         <applicationService serviceImplementation="com.wuzhizhan.mybatis.setting.MybatisSetting"/>
         <completion.contributor language="JAVA" implementationClass="com.wuzhizhan.mybatis.contributor.JavaMenthodCompletionContributor"/>

@@ -7,33 +7,34 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.wuzhizhan.mybatis.generate.GenerateModel;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.wuzhizhan.mybatis.generate.StatementGenerator.*;
+import static com.wuzhizhan.mybatis.generate.StatementGenerators.*;
 
 /**
  * @author yanglin
  */
 public class MybatisConfigurable implements SearchableConfigurable {
 
-    private MybatisSetting mybatisSetting;
+    private final MybatisSetting mybatisSetting;
 
     private MybatisSettingForm mybatisSettingForm;
 
-    private String separator = ";";
+    private final String separator = ";";
 
-    private Splitter splitter = Splitter.on(separator).omitEmptyStrings().trimResults();
+    private final Splitter splitter = Splitter.on(separator).omitEmptyStrings().trimResults();
 
-    private Joiner joiner = Joiner.on(separator);
+    private final Joiner joiner = Joiner.on(separator);
 
     public MybatisConfigurable() {
         mybatisSetting = MybatisSetting.getInstance();
     }
 
     @Override
-    public String getId() {
+    public @NotNull String getId() {
         return "Mybatis";
     }
 

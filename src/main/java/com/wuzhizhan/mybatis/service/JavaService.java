@@ -45,13 +45,15 @@ public class JavaService {
     }
 
     public Optional<DomElement> findStatement(@Nullable PsiMethod method) {
-        CommonProcessors.FindFirstProcessor<DomElement> processor = new CommonProcessors.FindFirstProcessor<DomElement>();
+        if (method == null) {
+            return Optional.empty();
+        }
+        CommonProcessors.FindFirstProcessor<DomElement> processor = new CommonProcessors.FindFirstProcessor<>();
         process(method, processor);
         return processor.isFound() ? Optional.ofNullable(processor.getFoundValue()) : Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
-    public void process(@NotNull PsiMethod psiMethod, @NotNull Processor<IdDomElement> processor) {
+    public void processMethod(@NotNull PsiMethod psiMethod, @NotNull Processor<IdDomElement> processor) {
         PsiClass psiClass = psiMethod.getContainingClass();
         if (null == psiClass) return;
         String id = psiClass.getQualifiedName() + "." + psiMethod.getName();
@@ -64,8 +66,7 @@ public class JavaService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void process(@NotNull PsiClass clazz, @NotNull Processor<Mapper> processor) {
+    public void processClass(@NotNull PsiClass clazz, @NotNull Processor<Mapper> processor) {
         String ns = clazz.getQualifiedName();
         for (Mapper mapper : MapperUtils.findMappers(clazz.getProject())) {
             if (MapperUtils.getNamespace(mapper).equals(ns)) {
@@ -76,9 +77,9 @@ public class JavaService {
 
     public void process(@NotNull PsiElement target, @NotNull Processor processor) {
         if (target instanceof PsiMethod) {
-            process((PsiMethod) target, processor);
+            processMethod((PsiMethod) target, processor);
         } else if (target instanceof PsiClass) {
-            process((PsiClass) target, processor);
+            processClass((PsiClass) target, processor);
         }
     }
 

@@ -2,8 +2,11 @@ package com.wuzhizhan.mybatis.inspection;
 
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
-import com.wuzhizhan.mybatis.generate.StatementGenerator;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
+import com.wuzhizhan.mybatis.generate.StatementGenerators;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,10 +14,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StatementNotExistsQuickFix extends GenericQuickFix {
 
-    private PsiMethod method;
+    @SafeFieldForPreview
+    private final SmartPsiElementPointer<PsiMethod> method;
 
     public StatementNotExistsQuickFix(@NotNull PsiMethod method) {
-        this.method = method;
+        PsiFile containingFile = method.getContainingFile();
+        Project project = containingFile == null ? method.getProject() : containingFile.getProject();
+        this.method = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(method, containingFile);
     }
 
     @NotNull
@@ -25,16 +31,7 @@ public class StatementNotExistsQuickFix extends GenericQuickFix {
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-        StatementGenerator.applyGenerate(method);
-    }
-
-    @NotNull
-    public PsiMethod getMethod() {
-        return method;
-    }
-
-    public void setMethod(@NotNull PsiMethod method) {
-        this.method = method;
+        StatementGenerators.applyGenerate(method.getElement());
     }
 
 }
