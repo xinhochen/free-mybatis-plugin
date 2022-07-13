@@ -3,8 +3,12 @@
     <name>Free Enhanced MyBatis</name>
     <vendor email="xinhochen@gmail.com" url="https://github.com/xinhochen/free-mybatis-plugin">xinhochen</vendor>
 
-    <version>2022.07.12</version>
+    <version>2022.07.13</version>
     <change-notes><![CDATA[
+        <h4>2022.07.13</h4>
+        <ul>
+            <li>doc: Fix change notes missing in 2022.07.12</li>
+        </ul>
         <h4>2022.07.12</h4>
         <ul>
             <li>feature: Support navigation for Kotlin</li>
