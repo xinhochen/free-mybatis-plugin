@@ -16,9 +16,9 @@ public interface Choose extends DomElement {
     @NotNull
     @Required
     @SubTagList("when")
-    public List<When> getWhens();
+    List<When> getWhens();
 
     @SubTag("otherwise")
-    public Otherwise getOtherwise();
+    Otherwise getOtherwise();
 
 }

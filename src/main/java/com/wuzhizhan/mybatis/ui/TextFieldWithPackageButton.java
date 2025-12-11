@@ -1,22 +1,13 @@
 package com.wuzhizhan.mybatis.ui;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
-import com.intellij.openapi.ui.TextBrowseFolderListener;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextAccessor;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExtendableTextField;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.SwingUndoUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +30,7 @@ public class TextFieldWithPackageButton extends ComponentWithBrowseButton<JTextF
     public TextFieldWithPackageButton(JTextField field, @Nullable ActionListener actionListener, @Nullable Disposable parent) {
         super(field, actionListener);
         if (!(field instanceof JBTextField)) {
-            UIUtil.addUndoRedoActions(field);
+            SwingUndoUtil.addUndoRedoActions(field);
         }
         addActionListener(actionListener);
     }

@@ -10,8 +10,8 @@ import java.awt.event.FocusListener;
  * Created by kangtian on 2018/8/3.
  */
 public class JTextFieldHintListener implements FocusListener {
-    private String hintText;
-    private JTextField textField;
+    private final String hintText;
+    private final JTextField textField;
 
     public JTextFieldHintListener(JTextField jTextField, String hintText) {
         this.textField = jTextField;

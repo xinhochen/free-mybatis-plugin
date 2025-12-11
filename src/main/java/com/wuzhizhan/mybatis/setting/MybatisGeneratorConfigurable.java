@@ -13,7 +13,6 @@ import javax.swing.*;
 public class MybatisGeneratorConfigurable implements SearchableConfigurable {
     private MybatisGeneratorSettingUI mainPanel;
 
-    @SuppressWarnings("FieldCanBeLocal")
     private final Project project;
 
 

@@ -18,9 +18,9 @@ public interface ParameterMap extends IdDomElement {
     @NotNull
     @Attribute("type")
     @Convert(AliasConverter.class)
-    public GenericAttributeValue<PsiClass> getType();
+    GenericAttributeValue<PsiClass> getType();
 
     @SubTagList("parameter")
-    public List<Parameter> getParameters();
+    List<Parameter> getParameters();
 
 }

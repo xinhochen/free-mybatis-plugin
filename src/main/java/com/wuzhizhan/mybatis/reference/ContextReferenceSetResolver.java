@@ -32,13 +32,14 @@ public abstract class ContextReferenceSetResolver<F extends PsiElement, K extend
     }
 
     @NotNull
-    public final Optional<? extends PsiElement> resolve(int index) {
+    public final Optional<K> resolve(int index) {
         Optional<K> startElement = getStartElement();
-        return startElement.isPresent() ? (texts.size() > 1 ? parseNext(startElement, texts, index) : startElement) : Optional.empty();
+        return startElement.isPresent() ? (texts.size() > 1 ? parseNext(startElement.get(), texts, index) : startElement) : Optional.empty();
     }
 
-    private Optional<K> parseNext(Optional<K> current, List<String> texts, int index) {
+    private Optional<K> parseNext(K start, List<String> texts, int index) {
         int ind = 1;
+        Optional<K> current = Optional.of(start);
         while (current.isPresent() && ind <= index) {
             String text = texts.get(ind);
             if (text.contains(" ")) {

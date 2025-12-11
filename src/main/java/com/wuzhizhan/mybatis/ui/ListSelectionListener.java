@@ -5,6 +5,6 @@ package com.wuzhizhan.mybatis.ui;
  */
 public interface ListSelectionListener extends ExecutableListener {
 
-    public void selected(int index);
+    void selected(int index);
 
 }

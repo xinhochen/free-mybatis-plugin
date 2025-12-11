@@ -8,6 +8,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPrimitiveType;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.CommonProcessors.CollectProcessor;
@@ -48,14 +49,13 @@ public abstract class StatementGenerator {
             return Optional.empty();
         }
         PsiType returnType = method.getReturnType();
-        if (returnType instanceof PsiPrimitiveType && !PsiType.VOID.equals(returnType)) {
+        if (returnType instanceof PsiPrimitiveType && !PsiTypes.voidType().equals(returnType)) {
             String boxedTypeName = ((PsiPrimitiveType) returnType).getBoxedTypeName();
             if (boxedTypeName == null) {
                 return Optional.empty();
             }
             return JavaUtils.findClazz(method.getProject(), boxedTypeName);
-        } else if (returnType instanceof PsiClassReferenceType) {
-            PsiClassReferenceType type = (PsiClassReferenceType) returnType;
+        } else if (returnType instanceof PsiClassReferenceType type) {
             if (type.hasParameters()) {
                 PsiType[] parameters = type.getParameters();
                 if (parameters.length == 1) {

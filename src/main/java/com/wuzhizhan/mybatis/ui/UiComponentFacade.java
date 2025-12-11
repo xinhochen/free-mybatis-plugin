@@ -24,9 +24,9 @@ import java.awt.event.ActionListener;
  */
 public final class UiComponentFacade {
 
-    private Project project;
+    private final Project project;
 
-    private FileEditorManager fileEditorManager;
+    private final FileEditorManager fileEditorManager;
 
     private UiComponentFacade(Project project) {
         this.project = project;
@@ -116,7 +116,7 @@ public final class UiComponentFacade {
                     listener.selected(list.getSelectedIndex());
                 }
             };
-            builder.setItemChoosenCallback(new Runnable() {
+            builder.setItemChosenCallback(new Runnable() {
                 @Override
                 public void run() {
                     setActionForExecutableListener(runnable, listener);

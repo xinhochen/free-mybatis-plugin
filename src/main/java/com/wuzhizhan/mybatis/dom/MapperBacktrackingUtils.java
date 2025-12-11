@@ -13,6 +13,7 @@ import com.wuzhizhan.mybatis.dom.model.ParameterMap;
 import com.wuzhizhan.mybatis.dom.model.ResultMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -54,7 +55,7 @@ public final class MapperBacktrackingUtils {
 
     public static boolean isWithinSameTag(@NotNull DomElement domElement, @NotNull XmlElement xmlElement) {
         XmlTag xmlTag = PsiTreeUtil.getParentOfType(xmlElement, XmlTag.class);
-        return null != xmlElement && domElement.getXmlTag().equals(xmlTag);
+        return Objects.equals(domElement.getXmlTag(), xmlTag);
     }
 
 }

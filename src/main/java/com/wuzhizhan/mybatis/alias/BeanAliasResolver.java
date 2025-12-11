@@ -26,8 +26,8 @@ public class BeanAliasResolver extends PackageAliasResolver {
 
     private static final String MAPPER_ALIAS_PACKAGE_CLASS = "org.mybatis.spring.SqlSessionFactoryBean";
     private static final String MAPPER_ALIAS_PROPERTY = "typeAliasesPackage";
-    private ModuleManager moduleManager;
-    private SpringManager springManager;
+    private final ModuleManager moduleManager;
+    private final SpringManager springManager;
 
     public BeanAliasResolver(Project project) {
         super(project);

@@ -116,7 +116,6 @@ public final class MapperUtils {
         return null != containingClass ? findFirstMapper(project, containingClass) : Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     @NotNull
     @NonNls
     public static Mapper getMapper(@NotNull DomElement element) {

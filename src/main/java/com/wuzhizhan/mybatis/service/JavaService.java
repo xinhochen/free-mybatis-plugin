@@ -53,7 +53,7 @@ public class JavaService {
         return processor.isFound() ? Optional.ofNullable(processor.getFoundValue()) : Optional.empty();
     }
 
-    public void processMethod(@NotNull PsiMethod psiMethod, @NotNull Processor<IdDomElement> processor) {
+    public void processMethod(@NotNull PsiMethod psiMethod, Processor<IdDomElement> processor) {
         PsiClass psiClass = psiMethod.getContainingClass();
         if (null == psiClass) return;
         String id = psiClass.getQualifiedName() + "." + psiMethod.getName();
@@ -66,7 +66,7 @@ public class JavaService {
         }
     }
 
-    public void processClass(@NotNull PsiClass clazz, @NotNull Processor<Mapper> processor) {
+    public void processClass(@NotNull PsiClass clazz, Processor<Mapper> processor) {
         String ns = clazz.getQualifiedName();
         for (Mapper mapper : MapperUtils.findMappers(clazz.getProject())) {
             if (MapperUtils.getNamespace(mapper).equals(ns)) {

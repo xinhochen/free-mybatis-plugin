@@ -7,9 +7,6 @@ public class StringUtils {
 
     /**
      * convert string from slash style to camel style, such as my_course will convert to MyCourse
-     *
-     * @param str
-     * @return
      */
     public static String dbStringToCamelStyle(String str) {
         if (str != null) {
@@ -34,5 +31,18 @@ public class StringUtils {
 
     public static boolean isEmpty(Object str) {
         return str == null || "".equals(str);
+    }
+
+    public static boolean isBlank(final CharSequence cs) {
+        int strLen;
+        if (cs == null || (strLen = cs.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,0 +1,2 @@
+rootProject.name = "free-mybatis-plugin"
+

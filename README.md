@@ -1,18 +1,20 @@
 # Free Enhanced MyBatis
 
-[![IDEA 2022.1](https://img.shields.io/badge/IDEA-2022.1-yellowgreen.svg)](https://plugins.jetbrains.com/plugin/18699-free-enhanced-mybatis)
+[![IDEA 2024.2](https://img.shields.io/badge/IDEA-2024.2-yellowgreen.svg)](https://plugins.jetbrains.com/plugin/18699-free-enhanced-mybatis)
 [![Apache-2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-基于<https://gitee.com/wuzhizhan/free-mybatis-plugin>升级，支持IDEA 2022.1版本。
+基于<https://gitee.com/wuzhizhan/free-mybatis-plugin>升级，支持IDEA 2024.2版本。
 
 [中文](README.md) | [ENGLISH](README_EN.md)
 
 ## Description
-A idea plugin for mybatis .
+<!-- Plugin description -->
+A idea plugin for mybatis.
 free-mybatis-plugin 是一款增强idea对mybatis支持的插件，主要功能如下：
 - 生成mapper xml文件
 - 快速从代码跳转到mapper及从mapper返回代码
 - mybatis自动补全及语法错误提示
+<!-- Plugin description end -->
 
 ## 使用方法
 free-mybatis-plugin是一个提高mybatis编码的插件。实现了dao代码跳转到mapper，mapper跳转回dao，mapper文件、statement查询自动生成功能。

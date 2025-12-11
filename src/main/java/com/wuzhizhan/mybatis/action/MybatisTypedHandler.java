@@ -40,7 +40,7 @@ public class MybatisTypedHandler extends TypedHandlerDelegate {
     }
 
     private static void autoPopupParameter(final Project project, final Editor editor) {
-        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, psiFile -> true);
+        AutoPopupController.getInstance(project).scheduleAutoPopup(editor);
     }
 
 

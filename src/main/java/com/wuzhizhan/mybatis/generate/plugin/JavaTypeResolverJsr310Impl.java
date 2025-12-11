@@ -1,6 +1,5 @@
 package com.wuzhizhan.mybatis.generate.plugin;
 
-import java.sql.JDBCType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

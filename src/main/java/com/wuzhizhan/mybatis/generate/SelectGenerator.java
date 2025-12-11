@@ -28,9 +28,7 @@ public class SelectGenerator extends StatementGenerator {
 
     private void setupResultType(PsiMethod method, Select select) {
         Optional<PsiClass> clazz = StatementGenerator.getSelectResultType(method);
-        if (clazz.isPresent()) {
-            select.getResultType().setValue(clazz.get());
-        }
+        clazz.ifPresent(psiClass -> select.getResultType().setValue(psiClass));
     }
 
     @NotNull

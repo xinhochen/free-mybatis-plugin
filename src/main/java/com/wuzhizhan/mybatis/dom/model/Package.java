@@ -12,6 +12,6 @@ public interface Package extends DomElement {
 
     @NotNull
     @Attribute("name")
-    public GenericAttributeValue<String> getName();
+    GenericAttributeValue<String> getName();
 
 }

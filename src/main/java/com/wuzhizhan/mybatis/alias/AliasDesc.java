@@ -3,6 +3,8 @@ package com.wuzhizhan.mybatis.alias;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * @author yanglin
  */
@@ -54,11 +56,7 @@ public class AliasDesc {
         if (alias != null ? !alias.equalsIgnoreCase(aliasDesc.alias) : aliasDesc.alias != null) {
             return false;
         }
-        if (clazz != null ? !clazz.equals(aliasDesc.clazz) : aliasDesc.clazz != null) {
-            return false;
-        }
-
-        return true;
+        return Objects.equals(clazz, aliasDesc.clazz);
     }
 
     @Override

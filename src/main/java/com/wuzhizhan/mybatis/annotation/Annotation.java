@@ -49,7 +49,7 @@ public class Annotation implements Cloneable {
 
     public static class StringValue implements AnnotationValue {
 
-        private String value;
+        private final String value;
 
         public StringValue(@NotNull String value) {
             this.value = value;
@@ -94,7 +94,7 @@ public class Annotation implements Cloneable {
 
     private String setupAttributeText() {
         Optional<String> singleValue = getSingleValue();
-        return singleValue.isPresent() ? singleValue.get() : getComplexValue();
+        return singleValue.orElseGet(this::getComplexValue);
     }
 
     private String getComplexValue() {

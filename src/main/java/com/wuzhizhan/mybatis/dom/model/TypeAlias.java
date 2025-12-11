@@ -13,10 +13,10 @@ public interface TypeAlias extends DomElement {
 
     @NotNull
     @Attribute("type")
-    public GenericAttributeValue<PsiClass> getType();
+    GenericAttributeValue<PsiClass> getType();
 
     @NotNull
     @Attribute("alias")
-    public GenericAttributeValue<String> getAlias();
+    GenericAttributeValue<String> getAlias();
 
 }

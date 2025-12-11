@@ -24,4 +24,7 @@ public final class ArrayUtils {
         return (null == target || 1 != target.length) ? Optional.empty() : Optional.ofNullable(target[0]);
     }
 
+    public static boolean isEmpty(final Object[] array) {
+        return array == null || array.length == 0;
+    }
 }

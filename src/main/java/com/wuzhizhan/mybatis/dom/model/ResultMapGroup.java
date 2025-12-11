@@ -16,5 +16,5 @@ public interface ResultMapGroup extends DomElement {
     @NotNull
     @Attribute("resultMap")
     @Convert(ResultMapConverter.class)
-    public GenericAttributeValue<XmlTag> getResultMap();
+    GenericAttributeValue<XmlTag> getResultMap();
 }

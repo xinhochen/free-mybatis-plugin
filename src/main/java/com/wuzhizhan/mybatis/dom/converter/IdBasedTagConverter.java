@@ -125,7 +125,7 @@ public abstract class IdBasedTagConverter extends ConverterAdaptor<XmlAttributeV
 
     private class ValueReferenceProvider extends JavaClassReferenceProvider {
 
-        private ConvertContext context;
+        private final ConvertContext context;
 
         private ValueReferenceProvider(ConvertContext context) {
             this.context = context;
@@ -161,8 +161,8 @@ public abstract class IdBasedTagConverter extends ConverterAdaptor<XmlAttributeV
 
     private class ValueReference extends PsiReferenceBase<PsiElement> {
 
-        private ConvertContext context;
-        private String text;
+        private final ConvertContext context;
+        private final String text;
 
         public ValueReference(@NotNull PsiElement element, TextRange rng, ConvertContext context, String text) {
             super(element, rng, false);

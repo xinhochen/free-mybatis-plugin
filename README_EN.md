@@ -1,9 +1,9 @@
 # Free Enhanced MyBatis
 
-[![IDEA 2022.1](https://img.shields.io/badge/IDEA-2022.1-yellowgreen.svg)](https://plugins.jetbrains.com/plugin/18699-free-enhanced-mybatis)
+[![IDEA 2024.2](https://img.shields.io/badge/IDEA-2024.2-yellowgreen.svg)](https://plugins.jetbrains.com/plugin/18699-free-enhanced-mybatis)
 [![Apache-2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-Based on <https://gitee.com/wuzhizhan/free-mybatis-plugin>, support IDEA 2022.1.
+Based on <https://gitee.com/wuzhizhan/free-mybatis-plugin>, support IDEA 2024.2.
 
 [中文](README.md) | [ENGLISH](README_EN.md)
 

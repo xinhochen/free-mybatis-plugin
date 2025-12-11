@@ -7,8 +7,6 @@ import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.wuzhizhan.mybatis.annotation.Annotation;
 import com.wuzhizhan.mybatis.dom.model.IdDomElement;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author yanglin
@@ -109,7 +108,7 @@ public final class JavaUtils {
             return Optional.empty();
         }
         Optional<PsiAnnotation> psiAnnotation = getPsiAnnotation(target, annotation);
-        return psiAnnotation.map(value -> value.findAttributeValue(attrName));
+        return psiAnnotation.map((Function<PsiAnnotation, PsiAnnotationMemberValue>) value -> value.findAttributeValue(attrName));
     }
 
     @NotNull
@@ -119,7 +118,7 @@ public final class JavaUtils {
 
     public static Optional<String> getAnnotationValueText(@NotNull PsiModifierListOwner target, @NotNull Annotation annotation) {
         Optional<PsiAnnotationMemberValue> annotationValue = getAnnotationValue(target, annotation);
-        return annotationValue.map(psiAnnotationMemberValue -> psiAnnotationMemberValue.getText().replaceAll("\"", ""));
+        return annotationValue.map((Function<PsiAnnotationMemberValue, String>) psiAnnotationMemberValue -> psiAnnotationMemberValue.getText().replaceAll("\"", ""));
     }
 
     public static boolean isAnyAnnotationPresent(@NotNull PsiModifierListOwner target, @NotNull Set<Annotation> annotations) {
